@@ -1,6 +1,6 @@
 
 
-function handleQueries(queries: Record<string, string | number | undefined>) {
+export function handleQueries(queries: Record<string, string | number | undefined>) {
   return Object.entries(queries)
     ?.map(([key, value]) => {
       if (value)

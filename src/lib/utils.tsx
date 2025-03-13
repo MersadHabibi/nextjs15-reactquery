@@ -2,7 +2,6 @@ import { FRequestNewAccessTokenWithRefreshToken } from "@/hooks/api";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { removeCookie, setCookie } from "./server-utils";
-import { TCategoryTree } from "@/types/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
