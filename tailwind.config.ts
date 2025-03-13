@@ -26,6 +26,7 @@ export default {
           blue: "rgba(var(--color-primary-blue))",
           green: "rgba(var(--color-primary-green))",
           red: "rgba(var(--color-primary-red))",
+          border: "rgba(var(--color-primary-border))",
         },
         red: {
           DEFAULT: "#ff0000",
