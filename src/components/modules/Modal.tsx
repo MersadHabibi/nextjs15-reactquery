@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 import { useEffect } from "react";
-import { UseFormHandleSubmit } from "react-hook-form";
+import { type UseFormHandleSubmit } from "react-hook-form";
 
 type TClassnames = {
   background: string;

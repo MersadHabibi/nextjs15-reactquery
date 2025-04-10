@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { FIranYekan } from "@/config/fonts";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import Providers from "@/providers/providers";
 

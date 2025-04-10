@@ -3,7 +3,7 @@
 import { IEye, IEyeSlash } from "@/components/Icons";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { type UseFormRegister } from "react-hook-form";
 
 export default function Input({
   type: defaultType,

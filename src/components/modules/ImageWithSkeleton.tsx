@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Image, { ImageProps } from "next/image";
+import Image, { type ImageProps } from "next/image";
 import { cn } from "@/lib/utils";
 
 // Extend the default ImageProps to include our custom props

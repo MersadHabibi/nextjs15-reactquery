@@ -1,7 +1,7 @@
-import React, { RefObject, useRef, useState } from "react";
+import React, { type RefObject, useRef, useState } from "react";
 import { ChevronDownIcon } from "lucide-react";
 import { useOnClickOutside } from "usehooks-ts";
-import { FieldError } from "react-hook-form";
+import { type FieldError } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
 export type TOption = {

@@ -2,7 +2,7 @@
 
 import { cn, unFormatNumber } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { FieldError, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { type FieldError, type UseFormRegister, type UseFormSetValue } from "react-hook-form";
 
 // Helper function to format number with thousand separators
 const formatNumber = (value: string) => {
