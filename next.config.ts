@@ -3,24 +3,42 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   env: {
     baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
-    localSecretKey: process.env.LOCAL_SECRET_KEY,
-    websiteDomain: process.env.NEXT_PUBLIC_WEBSITE_DOMAIN,
-    websiteDomainShop: process.env.NEXT_PUBLIC_WEBSITE_DOMAIN_SHOP,
-    websiteDomainPost: process.env.NEXT_PUBLIC_WEBSITE_DOMAIN_POST,
-    websiteDomainShopCategories:
-      process.env.NEXT_PUBLIC_WEBSITE_DOMAIN_SHOP_CATEGORIES,
-    websiteDomainPostCategories:
-      process.env.NEXT_PUBLIC_WEBSITE_DOMAIN_POST_CATEGORIES,
   },
   images: {
-    remotePatterns: [
+    remotePatterns: [],
+  },
+  headers: async () => {
+    return [
       {
-        protocol: "https",
-        hostname: "cms-bucket-hadirasouli.storage.c2.liara.space",
-        port: "",
-        pathname: "/**",
+        source: "/:path*",
+        headers: [
+          {
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+        ],
       },
-    ],
+    ];
   },
 };
 
