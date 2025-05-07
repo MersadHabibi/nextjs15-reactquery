@@ -1,4 +1,3 @@
-import { FRequestNewAccessTokenWithRefreshToken } from "@/hooks/api";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { removeCookie, setCookie } from "./server-utils";
@@ -49,70 +48,6 @@ export async function srcToFile(
   } catch (error) {
     console.log(error);
     return undefined;
-  }
-}
-
-interface FetchOptions extends RequestInit {
-  onRefreshToken?: (newToken: string) => void;
-  timeout?: number; // optional timeout in milliseconds
-}
-
-export async function fetchWithRefreshToken(
-  input: RequestInfo,
-  init?: FetchOptions,
-): Promise<Response> {
-  const { timeout, ...fetchInit } = init || {};
-  const controller = timeout ? new AbortController() : undefined;
-  const timeoutId = timeout
-    ? setTimeout(() => controller?.abort(), timeout)
-    : undefined;
-
-  const options: RequestInit = {
-    ...fetchInit,
-    signal: controller?.signal,
-    headers: {
-      ...fetchInit.headers,
-    },
-  };
-
-  try {
-    let response = await fetch(`${input}`, options);
-
-    if (!response.ok && response.status === 403) {
-      await removeCookie("refreshToken");
-      await removeCookie("accessToken");
-      window.location.reload();
-    }
-
-    if (!response.ok && response.status === 401) {
-      const refreshTokenResponse =
-        await FRequestNewAccessTokenWithRefreshToken();
-
-      if (refreshTokenResponse.status === 401) {
-        await removeCookie("refreshToken");
-        await removeCookie("accessToken");
-
-        window.location.reload();
-      }
-      const newTokens: { access: string } = await refreshTokenResponse.json();
-
-      if (newTokens.access) {
-        await setCookie("accessToken", newTokens.access);
-        if (options.headers) {
-          (options.headers as Record<string, string>)["Authorization"] =
-            `Bearer ${newTokens.access}`;
-        } else {
-          options.headers = { Authorization: `Bearer ${newTokens.access}` };
-        }
-        response = await fetch(`${input}`, options);
-      }
-    }
-
-    return response;
-  } catch (error) {
-    throw error;
-  } finally {
-    if (timeoutId) clearTimeout(timeoutId);
   }
 }
 
