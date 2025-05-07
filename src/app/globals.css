@@ -10,30 +10,32 @@
 
     /* Primary variables */
 
-    --color-primary: 0, 172, 175;
+    --color-primary: 0, 74, 153;
     --color-primary-blue: 0, 88, 183;
     --color-primary-green: 0, 173, 142;
     --color-primary-red: 239, 87, 47;
 
-    --color-primary-light: 0, 172, 175;
+    /* --color-primary-light: 0, 172, 175;
 
-    --color-primary-dark: 0, 172, 175;
+    --color-primary-dark: 0, 172, 175; */
 
     /* Text variables */
 
-    --color-text-100: 123, 123, 123;
-    --color-text-200: 58, 58, 58;
+    --color-text-100: 130, 130, 130;
+    --color-text-200: 113, 113, 113;
+    --color-text-300: 55, 55, 55;
     --color-text: 0, 0, 0;
 
+    /* 
     --color-text-100-light: 123, 123, 123;
     --color-text-200-light: 58, 58, 58;
     --color-text-light: 0, 0, 0;
 
     --color-text-100-dark: 224, 224, 224;
     --color-text-200-dark: 245, 245, 245;
-    --color-text-dark: 255, 255, 255;
+    --color-text-dark: 255, 255, 255; */
 
-    --color-link: 34, 113, 177;
+    --color-link: 0, 103, 199;
 
     /* Borders */
 

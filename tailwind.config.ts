@@ -44,6 +44,7 @@ export default {
           DEFAULT: "rgba(var(--color-text))",
           100: "rgba(var(--color-text-100))",
           200: "rgba(var(--color-text-200))",
+          300: "rgba(var(--color-text-300))",
         },
         link: "rgba(var(--color-link))",
       },
