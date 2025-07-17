@@ -10,12 +10,16 @@ export default function NavLink({
   children,
   startsWith,
   activeFor,
+  onClick,
+  title,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
   startsWith?: boolean;
   activeFor?: string[];
+  title?: string;
+  onClick?: () => void;
 }) {
   const pathname = usePathname();
   const isActive =
@@ -23,7 +27,11 @@ export default function NavLink({
     activeFor?.some((item) => pathname.startsWith(item));
 
   return (
-    <Link href={href} className={cn(isActive && "active", className)}>
+    <Link
+      title={title}
+      href={href}
+      className={cn(isActive && "active", className)}
+      onClick={onClick}>
       {children}
     </Link>
   );

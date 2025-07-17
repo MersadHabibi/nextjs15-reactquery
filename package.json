@@ -1,5 +1,5 @@
 {
-  "name": "cms",
+  "name": "azrmelk",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,11 +34,14 @@
     "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.54.2",
     "react-hot-toast": "^2.5.1",
+    "react-input-mask": "^2.0.4",
     "react-intersection-observer": "^9.16.0",
+    "react-multi-date-picker": "^4.5.2",
     "react-quill": "^2.0.0",
     "react-quilljs": "^2.0.5",
     "react-textarea-autosize": "^8.5.7",
     "sharp": "^0.33.5",
+    "swiper": "^11.2.10",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^1.2.0",

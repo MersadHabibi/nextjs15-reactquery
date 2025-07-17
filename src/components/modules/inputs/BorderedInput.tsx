@@ -1,24 +1,21 @@
 "use client";
 
-import { cn, unFormatNumber } from "@/lib/utils";
+import { cn, formatNumber, unFormatNumber } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { type FieldError, type UseFormRegister, type UseFormSetValue } from "react-hook-form";
+import {
+  type FieldError,
+  type UseFormRegister,
+  type UseFormSetValue,
+} from "react-hook-form";
 
-// Helper function to format number with thousand separators
-const formatNumber = (value: string) => {
-  // Remove any non-digit characters except decimal point
-  const cleanValue = value.replace(/[^\d.]/g, "");
+// Function to convert Persian numbers to English
+const convertPersianToEnglish = (str: string) => {
+  if (!str) return "";
 
-  // Split number into integer and decimal parts
-  const [integerPart, decimalPart] = cleanValue.split(".");
-
-  // Add thousand separators to integer part
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-  // Return formatted number with decimal part if it exists
-  return decimalPart !== undefined
-    ? `${formattedInteger}.${decimalPart}`
-    : formattedInteger;
+  const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  return str.replace(/[۰-۹]/g, (match) => {
+    return persianDigits.indexOf(match).toString();
+  });
 };
 
 export default function BorderedInput({
@@ -66,6 +63,9 @@ export default function BorderedInput({
 } & React.ComponentProps<"input">) {
   const [displayValue, setDisplayValue] = useState("");
 
+  // Use text type for all inputs but handle number validation separately
+  const actualType = type === "number" ? "text" : type || "text";
+
   // Handle initial value
   useEffect(() => {
     if (isCurrency && (value || defaultValue)) {
@@ -73,38 +73,30 @@ export default function BorderedInput({
     }
   }, [value, defaultValue, isCurrency]);
 
-  // Function to convert Persian numbers to English
-  const convertPersianToEnglish = (str: string) => {
-    const persianNumbers = [
-      /۰/g,
-      /۱/g,
-      /۲/g,
-      /۳/g,
-      /۴/g,
-      /۵/g,
-      /۶/g,
-      /۷/g,
-      /۸/g,
-      /۹/g,
-    ];
-    const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-
-    let convertedStr = str;
-    for (let i = 0; i < 10; i++) {
-      convertedStr = convertedStr.replace(persianNumbers[i], englishNumbers[i]);
-    }
-    return convertedStr;
-  };
-
   const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
-    target.value = convertPersianToEnglish(target.value); // Convert input value
+    let convertedValue = convertPersianToEnglish(target.value);
+
+    // If original type was number, only allow digits (but don't restrict if it's a currency field)
+    if (type === "number" && !isCurrency && convertedValue) {
+      convertedValue = convertedValue.replace(/[^0-9]/g, "");
+      target.value = convertedValue;
+    }
+
+    // Only update if conversion actually changed something
+    if (convertedValue !== target.value) {
+      target.value = convertedValue;
+    }
+
     if (onInput) onInput(event);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Convert Persian digits to English first
+    const convertedValue = convertPersianToEnglish(event.target.value);
+
     if (isCurrency) {
-      const rawValue = unFormatNumber(event.target.value);
+      const rawValue = unFormatNumber(convertedValue);
       const formattedValue = formatNumber(rawValue);
       setDisplayValue(formattedValue);
 
@@ -120,7 +112,9 @@ export default function BorderedInput({
       if (onChange)
         onChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
     } else {
-      event.target.value = convertPersianToEnglish(event.target.value); // Convert input value
+      if (convertedValue !== event.target.value) {
+        event.target.value = convertedValue;
+      }
       if (onChange) onChange(event);
     }
   };
@@ -132,9 +126,8 @@ export default function BorderedInput({
       <div className={cn("w-full", containerClassName)}>
         <input
           dir={dir}
-          type={type || "text"}
+          type={actualType}
           id={name}
-          defaultValue={defaultValue}
           placeholder={placeholder}
           className={cn(
             "bordered-input",
@@ -143,20 +136,20 @@ export default function BorderedInput({
           )}
           value={displayValue}
           onClick={onClick}
-          onInput={(event) => onInput && onInput(event)}
+          onInput={handleInput}
           onChange={(e) => {
+            const convertedValue = convertPersianToEnglish(e.target.value);
             if (isCurrency) {
-              if (setValue)
-                setValue(name, e.currentTarget.value.replace(/,/g, "")); // Ensure react-hook-form gets the unformatted value
+              if (setValue) setValue(name, unFormatNumber(convertedValue)); // Ensure react-hook-form gets the unformatted value
               handleChange(e);
             } else {
-              if (setValue)
-                setValue(name, e.currentTarget.value.replace(/,/g, "")); // Ensure react-hook-form gets the unformatted value
+              if (setValue) setValue(name, convertedValue); // Ensure react-hook-form gets the unformatted value
             }
           }}
           onBlur={registration.onBlur}
           name={registration.name}
           ref={registration.ref}
+          {...props}
         />
         {error ? (
           <p className="m-0 pt-1 text-start text-xs text-[#ff0000]">
@@ -168,24 +161,26 @@ export default function BorderedInput({
   }
 
   if (register) {
+    const registration = register(name as any, { valueAsNumber });
     return (
       <div className={cn("w-full", containerClassName)}>
         <input
           disabled={disable}
           dir={dir}
-          type={type || "text"}
+          type={actualType}
           id={name}
-          defaultValue={defaultValue}
           placeholder={placeholder}
           className={cn(
             "bordered-input",
             className,
             error && "!border-[#ff0000]",
           )}
-          value={value}
+          {...(value !== undefined ? { value } : { defaultValue })}
           onClick={onClick}
           onInput={handleInput}
-          {...register(name as any, { valueAsNumber })}
+          onBlur={registration.onBlur}
+          name={registration.name}
+          ref={registration.ref}
           {...props}
         />
         {error ? (
@@ -202,9 +197,8 @@ export default function BorderedInput({
       <input
         disabled={disable}
         dir={dir}
-        type={type || "text"}
+        type={actualType}
         id={name}
-        defaultValue={defaultValue}
         placeholder={placeholder}
         className={cn(
           "bordered-input",
@@ -212,7 +206,7 @@ export default function BorderedInput({
           error && "!border-[#ff0000]",
         )}
         onClick={onClick}
-        value={value}
+        {...(value !== undefined ? { value } : { defaultValue })}
         onInput={handleInput}
         onChange={handleChange}
         {...props}

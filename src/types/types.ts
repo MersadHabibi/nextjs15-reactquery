@@ -1,8 +1,32 @@
-import { type Permission } from "@/permissions/permission.types";
+import { type Permissions } from "@/permissions/permission.types";
 
-export interface User {
+export type TUser = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  accessPerms?: Permissions[];
+  education: string | null;
   email: string;
-  role: Permission[];
-}
+  fixPhoneNumber: string | null;
+  birthdate: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  userPermission?: {
+    category: {
+      id: string;
+      name: string;
+      parents?: string[];
+    }[];
+  };
+  phoneNumber: string;
+  address?: string;
+  avatar?: string;
+};
+
+export type TMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};

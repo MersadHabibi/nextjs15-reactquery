@@ -21,6 +21,10 @@ export default {
         xs: "480px",
       },
       colors: {
+        background: {
+          DEFAULT: "rgba(var(--color-background))",
+        },
+        "admin-bg": "rgba(var(--color-admin-bg))",
         primary: {
           DEFAULT: "rgba(var(--color-primary))",
           blue: "rgba(var(--color-primary-blue))",

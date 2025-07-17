@@ -46,7 +46,7 @@
 import { api, apiService } from "@/lib/axios-client";
 
 // Using predefined API endpoints
-const userInfo = await api.auth.getUserInfo();
+const userInfo = await api.IAM.getUserInfo();
 
 // Using generic API methods
 const data = await apiService.get("/api/v1/path/to/resource", {

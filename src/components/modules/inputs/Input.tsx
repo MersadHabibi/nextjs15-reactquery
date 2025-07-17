@@ -5,6 +5,16 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { type UseFormRegister } from "react-hook-form";
 
+// Function to convert Persian numbers to English
+const convertPersianToEnglish = (str: string) => {
+  if (!str) return "";
+
+  const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  return str.replace(/[۰-۹]/g, (match) => {
+    return persianDigits.indexOf(match).toString();
+  });
+};
+
 export default function Input({
   type: defaultType,
   placeholder,
@@ -41,37 +51,48 @@ export default function Input({
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   const [isShow, setIsShow] = useState(false);
 
-  // Function to convert Persian numbers to English
-  const convertPersianToEnglish = (str: string) => {
-    const persianNumbers = [
-      /۰/g,
-      /۱/g,
-      /۲/g,
-      /۳/g,
-      /۴/g,
-      /۵/g,
-      /۶/g,
-      /۷/g,
-      /۸/g,
-      /۹/g,
-    ];
-    const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-
-    let convertedStr = str;
-    for (let i = 0; i < 10; i++) {
-      convertedStr = convertedStr.replace(persianNumbers[i], englishNumbers[i]);
-    }
-    return convertedStr;
-  };
+  // Use text type for all inputs but handle number validation separately
+  const actualType =
+    defaultType === "number"
+      ? "text"
+      : defaultType === "password"
+        ? isShow
+          ? "text"
+          : "password"
+        : defaultType || "text";
 
   const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
-    target.value = convertPersianToEnglish(target.value); // Convert input value
+    let convertedValue = convertPersianToEnglish(target.value);
+
+    // If original type was number, only allow digits
+    if (defaultType === "number" && convertedValue) {
+      convertedValue = convertedValue.replace(/[^0-9]/g, "");
+      target.value = convertedValue;
+    }
+
+    // Only update if conversion actually changed something
+    if (convertedValue !== target.value) {
+      target.value = convertedValue;
+    }
+
     if (onInput) onInput(event);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.target.value = convertPersianToEnglish(event.target.value); // Convert input value
+    let convertedValue = convertPersianToEnglish(event.target.value);
+
+    // If original type was number, only allow digits
+    if (defaultType === "number" && convertedValue) {
+      convertedValue = convertedValue.replace(/[^0-9]/g, "");
+      event.target.value = convertedValue;
+    }
+
+    // Only update if conversion actually changed something
+    if (convertedValue !== event.target.value) {
+      event.target.value = convertedValue;
+    }
+
     if (onChange) onChange(event);
   };
 
@@ -81,13 +102,7 @@ export default function Input({
         <div className="relative">
           <input
             accept={accept}
-            type={
-              defaultType === "password"
-                ? isShow
-                  ? "text"
-                  : "password"
-                : defaultType || "text"
-            }
+            type={actualType}
             id={name}
             defaultValue={defaultValue}
             placeholder={placeholder}
@@ -130,7 +145,7 @@ export default function Input({
     <div className={cn("w-full", containerClassName)}>
       <input
         accept={accept}
-        type={defaultType || "text"}
+        type={actualType}
         id={name}
         defaultValue={defaultValue}
         placeholder={placeholder}

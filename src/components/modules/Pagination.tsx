@@ -23,7 +23,7 @@ export default function Pagination(props: TProps) {
   if (!props.pageInfo?.totalPages) return null;
 
   return (
-    <div className="flex items-end justify-end gap-x-2 pt-5">
+    <div className="flex items-end justify-center gap-x-2 py-5">
       {/* next page */}
       <button
         className="hover:bg-primary-100 disabled:hover:!bg-background-color flex size-9 items-center justify-center rounded-md border border-primary-border transition-colors disabled:cursor-not-allowed disabled:opacity-70 [&.active]:!bg-primary"

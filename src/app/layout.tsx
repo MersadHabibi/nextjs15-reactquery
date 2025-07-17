@@ -7,10 +7,10 @@ import Providers from "@/providers/providers";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | انجمن عکس",
-    default: "انجمن عکس",
+    template: "%s | آذرملک",
+    default: "آذرملک",
   },
-  description: "انجمن عکس",
+  description: "آذرملک",
 };
 
 export default function RootLayout({
@@ -19,10 +19,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl" className="!scroll-smooth">
+    <html
+      lang="fa"
+      dir="rtl"
+      className="!scroll-smooth"
+      suppressHydrationWarning>
       <body
         className={cn(
-          "!text-text-300 relative mx-0 min-h-dvh overflow-y-auto overflow-x-hidden !scroll-smooth font-normal",
+          "overflow-y-aut o relative mx-0 min-h-dvh overflow-x-hidden !scroll-smooth font-normal !text-text",
           FIranYekan.className,
           FIranYekan.variable,
         )}>

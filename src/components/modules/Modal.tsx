@@ -18,12 +18,13 @@ type ModalProps = {
   children: React.ReactNode;
   classNames?: Partial<TClassnames>;
   isOpen: boolean;
-  title?: string;
+  title?: string | React.ReactNode;
   size?: "full";
   handleSubmit?: UseFormHandleSubmit<any, undefined>;
   onClickOutside?: () => void;
   onCloseModal?: () => void;
   onSubmit?: (data: FormData | any) => void;
+  doNotHiddenOverflow?: boolean;
 };
 
 export default function Modal({
@@ -36,15 +37,21 @@ export default function Modal({
   onClickOutside,
   onCloseModal,
   onSubmit,
+  doNotHiddenOverflow,
 }: ModalProps) {
   useEffect(() => {
-    if (isOpen) document.body.classList.add("!overflow-hidden");
-    else document.body.classList.remove("!overflow-hidden");
+    if (doNotHiddenOverflow) return;
+    else {
+      if (isOpen) document.body.classList.add("!overflow-hidden");
+      else document.body.classList.remove("!overflow-hidden");
+    }
 
     return () => {
+      if (doNotHiddenOverflow) return;
+
       document.body.classList.remove("!overflow-hidden");
     };
-  }, [isOpen]);
+  }, [isOpen, doNotHiddenOverflow]);
 
   return (
     <div
@@ -85,14 +92,14 @@ export default function Modal({
             "flex items-center justify-between border-b border-primary-border px-6 py-5",
             classNames?.header,
           )}>
-          <p className={cn("font-medium", classNames?.title)}>{title}</p>
+          <div className={cn("font-medium", classNames?.title)}>{title}</div>
           <button
             type="button"
             onClick={onCloseModal}
             className={cn(classNames?.closeButton)}>
             <XIcon
               className={cn(
-                "text-text-300 size-6",
+                "size-6 text-text-300",
                 classNames?.closeButtonIcon,
               )}
             />

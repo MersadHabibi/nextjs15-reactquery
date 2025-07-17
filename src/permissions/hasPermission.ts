@@ -1,76 +1,103 @@
-import { type User } from "@/types/types";
-import { type Action, type Permission, type Subject } from "./permission.types";
+import { Permissions, Action, Subject } from "./permission.types";
 
 // Map permissions to subject actions
 const permissionMap: Record<
-  Permission,
+  Permissions,
   Array<{ subject: Subject; action: Action }>
 > = {
-  superuser: [
-    { subject: "file", action: "manage" },
-    { subject: "meeting", action: "manage" },
-    { subject: "user", action: "manage" },
-    { subject: "report", action: "manage" },
+  // ROLES
+  [Permissions.OWNER]: [
+    { subject: Subject.ESTATES, action: Action.MANAGE },
+    { subject: Subject.USERS, action: Action.MANAGE },
+    { subject: Subject.CATEGORIES, action: Action.MANAGE },
+    { subject: Subject.LANDINGS, action: Action.MANAGE },
+    { subject: Subject.SUPERUSERS, action: Action.MANAGE },
   ],
-  admin: [
-    { subject: "file", action: "manage" },
-    { subject: "meeting", action: "manage" },
-    { subject: "user", action: "read" },
-    { subject: "report", action: "read" },
+  [Permissions.SUPER_USER]: [
+    { subject: Subject.ESTATES, action: Action.MANAGE },
+    { subject: Subject.USERS, action: Action.MANAGE },
+    { subject: Subject.CATEGORIES, action: Action.MANAGE },
+    { subject: Subject.LANDINGS, action: Action.MANAGE },
   ],
-  support: [
-    { subject: "file", action: "read" },
-    { subject: "meeting", action: "read" },
-    { subject: "report", action: "read" },
+
+  [Permissions.USER]: [],
+
+  // PERMISSIONS
+  [Permissions.CREATE_PRODUCT]: [
+    { subject: Subject.ESTATES, action: Action.CREATE },
   ],
-  fileManagement: [
-    { subject: "file", action: "create" },
-    { subject: "file", action: "read" },
-    { subject: "file", action: "update" },
-    { subject: "file", action: "delete" },
+  [Permissions.EDIT_PRODUCT]: [
+    { subject: Subject.ESTATES, action: Action.UPDATE },
   ],
-  meetManagement: [
-    { subject: "meeting", action: "create" },
-    { subject: "meeting", action: "read" },
-    { subject: "meeting", action: "update" },
-    { subject: "meeting", action: "delete" },
+  [Permissions.GET_PRODUCT]: [
+    { subject: Subject.ESTATES, action: Action.READ },
+  ],
+  [Permissions.EDIT_USERS]: [{ subject: Subject.USERS, action: Action.UPDATE }],
+  [Permissions.GET_USER]: [{ subject: Subject.USERS, action: Action.READ }],
+  [Permissions.CREATE_CATEGORY]: [
+    { subject: Subject.CATEGORIES, action: Action.CREATE },
+  ],
+  [Permissions.EDIT_CATEGORY]: [
+    { subject: Subject.CATEGORIES, action: Action.UPDATE },
+  ],
+  [Permissions.GET_CATEGORY]: [
+    { subject: Subject.CATEGORIES, action: Action.READ },
+  ],
+  [Permissions.CREATE_SESSION]: [
+    { subject: Subject.SESSIONS, action: Action.CREATE },
+  ],
+  [Permissions.EDIT_SESSION]: [
+    { subject: Subject.SESSIONS, action: Action.UPDATE },
+  ],
+  [Permissions.GET_SESSION]: [
+    { subject: Subject.SESSIONS, action: Action.READ },
   ],
 };
 
 // Check single permission
-export function hasPermission(permission: Permission, user: User): boolean {
-  return user.role.includes(permission);
+export function hasPermission(
+  permission: Permissions,
+  userAccessPerms: Permissions[],
+): boolean {
+  return userAccessPerms?.includes(permission) ?? false;
 }
 
 // Check if user has any of the permissions
 export function hasAnyPermission(
-  permissions: Permission[],
-  user: User,
+  permissions: Permissions[],
+  userAccessPerms: Permissions[],
 ): boolean {
-  return permissions.some((permission) => user.role.includes(permission));
+  return permissions.some((permission) =>
+    userAccessPerms?.includes(permission),
+  );
 }
 
 // Check if user has all permissions
 export function hasAllPermissions(
-  permissions: Permission[],
-  user: User,
+  permissions: Permissions[],
+  userAccessPerms: Permissions[],
 ): boolean {
-  return permissions.every((permission) => user.role.includes(permission));
+  return permissions.every((permission) =>
+    userAccessPerms?.includes(permission),
+  );
 }
 
 // Check permission for specific subject and action
 export function canPerform(
   subject: Subject,
   action: Action,
-  user: User,
+  accessPerms: Permissions[],
 ): boolean {
   // Special case: if user has superuser, they can do anything
-  if (user.role.includes("superuser")) {
+  if (
+    accessPerms?.includes(Permissions.SUPER_USER) ||
+    accessPerms?.includes(Permissions.OWNER)
+  ) {
     return true;
   }
 
   // Check each permission the user has
-  for (const permission of user.role) {
+  for (const permission of accessPerms ?? []) {
     const allowedActions = permissionMap[permission];
 
     // Check if any of the allowed actions match the requested subject and action
@@ -78,7 +105,7 @@ export function canPerform(
       // Exact match
       if (
         allowed.subject === subject &&
-        (allowed.action === action || allowed.action === "manage")
+        (allowed.action === action || allowed.action === Action.MANAGE)
       ) {
         return true;
       }

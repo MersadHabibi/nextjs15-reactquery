@@ -5,10 +5,12 @@ export default function CustomSwitch({
   onChange,
   checked,
   className,
+  disabled,
 }: {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   checked: boolean;
   className: string;
+  disabled?: boolean;
 }) {
   return (
     <div className={cn("checkbox-wrapper-51", className)}>
@@ -17,6 +19,7 @@ export default function CustomSwitch({
         type="checkbox"
         checked={checked}
         onChange={onChange}
+        disabled={disabled}
       />
       <label className="toggle" htmlFor="cbx-51">
         <span>

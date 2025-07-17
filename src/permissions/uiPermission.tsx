@@ -6,7 +6,11 @@ import {
   hasAnyPermission,
   hasPermission,
 } from "./hasPermission";
-import { type Action, type Permission, type Subject } from "./permission.types";
+import {
+  type Action,
+  type Permissions,
+  type Subject,
+} from "./permission.types";
 
 interface CanProps {
   subject: Subject;
@@ -33,7 +37,7 @@ export function PermissionGuardBySubjectAndAction({
 }
 
 interface PermissionGuardProps {
-  permission: Permission | Permission[];
+  permission: Permissions | Permissions[];
   children: ReactNode;
   fallback?: ReactNode;
   requireAll?: boolean;

@@ -1,16 +1,18 @@
+import { type TUserInfoResponse } from "@/types/client/auth/types";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { api } from "../axios-client";
+import { api } from "@/services/axios-client";
+import { handleApiError } from "@/lib/utils";
 
-export function useUser() {
-  const user = useQuery({
-    queryKey: ["user"],
+export function useUserInfo() {
+  const userInfo = useQuery({
+    queryKey: ["userInfo"],
     queryFn: async () => {
       try {
         const res = await api.client.IAM.getUserInfo();
 
         if (res.status >= 400) {
-          // if (res.status === 500) throw new Error(JSON.stringify(res));
+          if (res.status === 500) throw new Error(JSON.stringify(res));
           const data = res.data as {
             message: string;
             details: string;
@@ -21,11 +23,11 @@ export function useUser() {
           return null;
         }
 
-        const data = res.data as any;
+        const data = res.data as TUserInfoResponse;
 
         return data;
       } catch (error) {
-        toast.error(`${error}`);
+        toast.error(handleApiError(error, true));
 
         return null;
       }
@@ -33,6 +35,6 @@ export function useUser() {
   });
 
   return {
-    user,
+    userInfo,
   };
 }

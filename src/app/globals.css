@@ -6,10 +6,11 @@
   :root {
     /* Base */
 
-    --color-background-default: 255, 255, 255;
+    --color-background: 255, 255, 255;
+    --color-primary-border: 204, 204, 204;
+    --color-admin-bg: 242, 250, 254;
 
     /* Primary variables */
-
     --color-primary: 0, 74, 153;
     --color-primary-blue: 0, 88, 183;
     --color-primary-green: 0, 173, 142;
@@ -21,9 +22,11 @@
 
     /* Text variables */
 
-    --color-text-100: 130, 130, 130;
-    --color-text-200: 113, 113, 113;
-    --color-text-300: 55, 55, 55;
+    --color-text-100: 150, 150, 150;
+    --color-text-200: 125, 125, 125;
+    --color-text-300: 80, 80, 80;
+    --color-text-400: 55, 55, 55;
+
     --color-text: 0, 0, 0;
 
     /* 
@@ -144,7 +147,7 @@
   }
 
   .bordered-input {
-    @apply h-12 w-full rounded-xl border border-primary-border px-3 py-1 outline-none placeholder:text-sm placeholder:text-primary-border focus:border-neutral-600 disabled:bg-neutral-100 disabled:opacity-70;
+    @apply h-12 w-full !min-w-0 rounded-xl border border-primary-border px-3 py-1 outline-none placeholder:text-sm placeholder:text-primary-border focus:border-neutral-600 disabled:bg-neutral-100 disabled:opacity-70;
   }
 
   .custom-post-data {
@@ -614,7 +617,7 @@
     position: relative;
   }
 
-  @keyframes jelly {
+  /* @keyframes jelly {
     from {
       transform: scale(1, 1);
     }
@@ -642,7 +645,7 @@
     to {
       transform: scale(1, 1);
     }
-  }
+  } */
 
   .hidden-xs-up {
     display: none !important;

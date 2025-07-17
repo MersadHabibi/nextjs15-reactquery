@@ -1,6 +1,7 @@
 import { useUser } from "@/services/queries/useUser";
 import { canPerform } from "./hasPermission";
 import { type Action, type Subject } from "./permission.types";
+
 export function useAbility() {
   const { user } = useUser();
 

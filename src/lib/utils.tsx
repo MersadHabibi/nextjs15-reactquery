@@ -1,5 +1,7 @@
+import { clearTokenCache } from "@/services/axios-client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { removeCookie } from "./server-utils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -122,4 +124,86 @@ export const remainingDate = (targetDate: Date) => {
   } else {
     return { number: minutes + 1, label: "دقیقه", key: "min" };
   }
+};
+
+/**
+ * Extracts error message from API error response
+ * @param error - The caught error object
+ * @param shouldLog - Whether to log the error to console (default: false)
+ * @returns The error message string to display
+ */
+export const handleApiError = (
+  error: unknown,
+  shouldLog: boolean = false,
+): string => {
+  // Check if error is an object with response data
+  if (
+    error &&
+    typeof error === "object" &&
+    "response" in error &&
+    error.response &&
+    typeof error.response === "object" &&
+    "data" in error.response
+  ) {
+    const errorData = error.response.data;
+
+    // Log the error data if requested
+    if (shouldLog) {
+      console.log(errorData);
+    }
+
+    if (errorData && typeof errorData === "object") {
+      // Try to extract message or details from error response
+      if ("message" in errorData && typeof errorData.message === "string") {
+        return errorData.message;
+      } else if (
+        "details" in errorData &&
+        typeof errorData.details === "string"
+      ) {
+        return errorData.details;
+      }
+    }
+  }
+
+  // Fallback to generic error message
+  return `${"مشکلی پیش آمده است"}`;
+};
+
+export const logout = async () => {
+  await removeCookie("accessToken");
+  await removeCookie("refreshToken");
+  clearTokenCache();
+  window.location.reload();
+};
+
+export const convertToEnglishNumbers = (str: string) => {
+  const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  const arabicNumbers = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+  let result = str.toString();
+
+  for (let i = 0; i < 10; i++) {
+    const regex = new RegExp(persianNumbers[i] + "|" + arabicNumbers[i], "g");
+    result = result.replace(regex, englishNumbers[i]);
+  }
+
+  return result;
+};
+
+// Helper function to format number with thousand separators
+export const formatNumber = (value: string) => {
+  // Remove any non-digit characters except decimal point
+  const cleanValue = value.replace(/[^\d.]/g, "");
+
+  // Split number into integer and decimal parts
+  const [integerPart, decimalPart] = cleanValue.split(".");
+
+  // Add thousand separators to integer part
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // Return formatted number with decimal part if it exists
+  return decimalPart !== undefined
+    ? `${formattedInteger}.${decimalPart}`
+    : formattedInteger;
 };
